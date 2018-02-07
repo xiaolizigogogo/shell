@@ -1,0 +1,21 @@
+filebeat.prospectors:
+- type: log
+  paths:
+    - /usr01/logs/*/*/*.log
+  encoding: plain
+  multiline:
+    pattern: '^\['
+    negate: true
+    match: after
+    max_lines: 20
+    timeout: 5s
+output.kafka:
+  # initial brokers for reading cluster metadata
+  hosts: ["kafka.zytc.com:9092"]
+  # message topic selection + partitioning
+  topic: '%{[type]}'
+  partition.round_robin:
+    reachable_only: false
+  required_acks: 1
+  compression: gzip
+  max_message_bytes: 5000000
