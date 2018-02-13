@@ -1,0 +1,23 @@
+filebeat.prospectors:
+- type: log
+  paths:
+    - /home/zytc/logs/**/**/*.log
+  scan_frequency: 10s
+  #删除非活动文件的状态
+  clean_inactive: 25h 
+  #关闭不活动的文件
+  close_inactive: 5m
+  ignore_older: 24h
+output.kafka:
+  # initial brokers for reading cluster metadata
+  hosts: ["kafka.zytc.com:9092"]
+  # message topic selection + partitioning
+  topic: '%{[fields.log_topic]}'
+  partition.round_robin:
+    reachable_only: true
+
+  required_acks: 1
+  compression: gzip
+  max_message_bytes: 1000000
+fields:
+  log_topic: test
